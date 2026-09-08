@@ -5,7 +5,8 @@ export function createEmptyGrid(): Grid {
 }
 
 function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length, randomIndex;
+  let currentIndex = array.length;
+  let randomIndex: number;
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
@@ -49,7 +50,7 @@ export function generatePuzzle(difficulty: 'Hard' | 'Very Hard'): { puzzle: Grid
     const puzzle = cloneGrid(solution);
 
     // Create a list of all 81 positions and shuffle them
-    const positions = [];
+    const positions: [number, number][] = [];
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
         positions.push([r, c]);

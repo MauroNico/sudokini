@@ -1,9 +1,11 @@
 import { generatePuzzle } from './generator';
 
-self.onmessage = (e) => {
+const ctx: Worker = self as any;
+
+ctx.onmessage = (e: MessageEvent) => {
   const { amount, difficulty } = e.data;
 
-  const results = [];
+  const results: any[] = [];
 
   for (let i = 0; i < amount; i++) {
     // If mixed, alternate difficulty
@@ -23,14 +25,14 @@ self.onmessage = (e) => {
       difficulty: currentDifficulty
     });
 
-    self.postMessage({
+    ctx.postMessage({
       type: 'progress',
       current: i + 1,
       total: amount
     });
   }
 
-  self.postMessage({
+  ctx.postMessage({
     type: 'done',
     results
   });

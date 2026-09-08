@@ -129,7 +129,7 @@ export function classifyDifficulty(originalGrid: Grid): 'Easy' | 'Hard' | 'Very 
     for (let num = 1; num <= 9; num++) {
       // Check rows
       for (let r = 0; r < 9; r++) {
-        let possibleCols = [];
+        let possibleCols: number[] = [];
         for (let c = 0; c < 9; c++) {
           if (grid[r][c] === 0 && candidates[r][c].has(num)) possibleCols.push(c);
         }
@@ -143,7 +143,7 @@ export function classifyDifficulty(originalGrid: Grid): 'Easy' | 'Hard' | 'Very 
       }
       // Check cols
       for (let c = 0; c < 9; c++) {
-        let possibleRows = [];
+        let possibleRows: number[] = [];
         for (let r = 0; r < 9; r++) {
           if (grid[r][c] === 0 && candidates[r][c].has(num)) possibleRows.push(r);
         }
@@ -159,7 +159,7 @@ export function classifyDifficulty(originalGrid: Grid): 'Easy' | 'Hard' | 'Very 
       for (let b = 0; b < 9; b++) {
         const startRow = Math.floor(b / 3) * 3;
         const startCol = (b % 3) * 3;
-        let possibleCells = [];
+        let possibleCells: [number, number][] = [];
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             const r = startRow + i;
@@ -256,9 +256,9 @@ export function classifyDifficulty(originalGrid: Grid): 'Easy' | 'Hard' | 'Very 
     
     // 5. X-Wing (Advanced)
     for (let num = 1; num <= 9; num++) {
-      const rowPositions = [];
+      const rowPositions: { r: number, cols: number[] }[] = [];
       for (let r = 0; r < 9; r++) {
-        const cols = [];
+        const cols: number[] = [];
         for (let c = 0; c < 9; c++) {
           if (candidates[r][c].has(num)) cols.push(c);
         }

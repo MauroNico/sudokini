@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { generatePDF } from './pdf/pdf';
 import { Download, Loader2, Settings, FileText } from 'lucide-react';
 

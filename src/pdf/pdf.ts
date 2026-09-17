@@ -15,12 +15,12 @@ export function generatePDF(data: PuzzleData[], includeSolutions: boolean, globa
   });
 
   const SIZES = {
-    sudokuSize: 63,
-    cellSize: 7,
+    sudokuSize: 76.5,
+    cellSize: 8.5,
     columns: 2,
     rows: 3,
-    startX: [28.5, 118.5],
-    startY: [25, 114, 203] // Adjusted for A4 (297mm height)
+    startX: [20, 113.5],
+    startY: [22, 115, 208] // Adjusted for larger grids
   };
 
   let pageNum = 1;
@@ -39,12 +39,12 @@ export function generatePDF(data: PuzzleData[], includeSolutions: boolean, globa
 
   function drawSudokuGrid(x: number, y: number, grid: Grid, puzzleNum: number) {
     // Title
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text(`Sudoku #${puzzleNum}`, x + SIZES.sudokuSize / 2, y - 3, { align: 'center' });
 
     // Draw cells
-    doc.setFontSize(12);
+    doc.setFontSize(16);
     doc.setFont('helvetica', 'normal');
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {

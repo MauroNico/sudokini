@@ -1,16 +1,13 @@
-import { Grid, isValid, countSolutions, classifyDifficulty, cloneGrid } from './solver';
+import { Grid, isValid, countSolutions, classifyDifficulty, cloneGrid, solveGrid } from './solver';
 
 export function createEmptyGrid(): Grid {
   return Array.from({ length: 9 }, () => Array(9).fill(0));
 }
 
 function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length;
-  let randomIndex: number;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
 }
@@ -29,9 +26,7 @@ function fillGrid(grid: Grid): boolean {
         for (const num of nums) {
           if (isValid(grid, row, col, num)) {
             grid[row][col] = num;
-            if (fillGrid(grid)) {
-              return true;
-            }
+            if (fillGrid(grid)) return true;
             grid[row][col] = 0;
           }
         }
@@ -42,14 +37,28 @@ function fillGrid(grid: Grid): boolean {
   return true;
 }
 
-export function generatePuzzle(difficulty: 'Hard' | 'Very Hard'): { puzzle: Grid, solution: Grid } | null {
-  const MAX_ATTEMPTS = 50;
+/**
+ * Generates a fingerprint string for a puzzle grid to detect duplicates.
+ */
+export function gridFingerprint(grid: Grid): string {
+  return grid.map(row => row.join('')).join('');
+}
+
+/**
+ * Generates a single puzzle of the requested difficulty.
+ * Returns the puzzle, its solution, or null if it couldn't generate one.
+ */
+export function generatePuzzle(
+  difficulty: 'Hard' | 'Very Hard',
+  existingFingerprints: Set<string>
+): { puzzle: Grid; solution: Grid } | null {
+  const MAX_ATTEMPTS = 80;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const solution = generateSolvedGrid();
     const puzzle = cloneGrid(solution);
 
-    // Create a list of all 81 positions and shuffle them
+    // Create a shuffled list of all 81 positions
     const positions: [number, number][] = [];
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
@@ -58,24 +67,30 @@ export function generatePuzzle(difficulty: 'Hard' | 'Very Hard'): { puzzle: Grid
     }
     shuffle(positions);
 
-    // Punch holes
+    // Remove clues one by one, verifying unique solution each time
     for (const [r, c] of positions) {
       const backup = puzzle[r][c];
       puzzle[r][c] = 0;
 
-      // Check if it still has a unique solution
       if (countSolutions(puzzle) !== 1) {
-        // Put it back if it broke uniqueness
         puzzle[r][c] = backup;
       }
     }
 
+    // Check difficulty
     const currentDifficulty = classifyDifficulty(puzzle);
-    if (currentDifficulty === difficulty) {
-      return { puzzle, solution };
-    }
+    if (currentDifficulty !== difficulty) continue;
+
+    // Check uniqueness (dedup)
+    const fp = gridFingerprint(puzzle);
+    if (existingFingerprints.has(fp)) continue;
+
+    // Verify the stored solution is correct by solving the puzzle independently
+    const verified = solveGrid(puzzle);
+    if (!verified) continue; // Should never happen, but safety check
+
+    return { puzzle, solution: verified };
   }
 
-  return null; // Failed to generate after MAX_ATTEMPTS
+  return null;
 }
-

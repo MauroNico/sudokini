@@ -11,3 +11,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.sudoku-input {
+  font: inherit;
+  font-size: max(1rem, 1em);
+}
+
+.sudoku-input:focus-visible,
+.sudoku-control:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+:is(.sudoku-input:user-invalid, .sudoku-input[aria-invalid='true']) {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
